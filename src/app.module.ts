@@ -2,12 +2,11 @@ import { HttpModule } from '@nestjs/axios';
 import { Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { GetGithubUserReposController } from './get-github-user-repos/get-github-user-repos.controller';
-import { GetGithubUserReposService } from './get-github-user-repos/get-github-user-repos.service';
+import { GetGithubUserReposModule } from './get-github-user-repos/get-github-user-repos.module';
 
 @Module({
-  imports: [HttpModule],
-  controllers: [AppController, GetGithubUserReposController],
-  providers: [AppService, GetGithubUserReposService],
+  imports: [HttpModule, GetGithubUserReposModule],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {}
