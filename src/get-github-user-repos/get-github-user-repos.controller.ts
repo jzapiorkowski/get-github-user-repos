@@ -7,8 +7,8 @@ export class GetGithubUserReposController {
     private readonly getGithubUserReposService: GetGithubUserReposService,
   ) {}
 
-  @Get(':id/repos')
-  getUserRepos(@Param('id') userId: string) {
-    return this.getGithubUserReposService.getUserRepos();
+  @Get(':username/repos')
+  getUserRepos(@Param('username') username: string) {
+    return this.getGithubUserReposService.getUserRepos(username);
   }
 }
