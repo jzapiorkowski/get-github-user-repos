@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
-
 import axios from 'axios';
 import { GetReposInfoService } from 'src/get-repos-info/get-repos-info.service';
+import { UserRepos } from './types';
 
 @Injectable()
 export class GetGithubUserReposService {
@@ -9,7 +9,7 @@ export class GetGithubUserReposService {
 
   async getUserRepos(username: string): Promise<any> {
     try {
-      const { data: userGithubRepos } = await axios.get(
+      const { data: userGithubRepos } = await axios.get<UserRepos[]>(
         `https://api.github.com/users/${username}/repos`,
       );
 
@@ -29,7 +29,7 @@ export class GetGithubUserReposService {
     }
   }
 
-  private extractUsersRepos(repositories: Record<any, any>[]) {
+  private extractUsersRepos(repositories: UserRepos[]) {
     return repositories.filter((repo) => repo.forks_count === 0);
   }
 }
