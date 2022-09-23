@@ -1,3 +1,4 @@
+import { ResponseRepoType } from './types';
 import { Controller, Get, Param } from '@nestjs/common';
 import { GetGithubUserReposService } from './get-github-user-repos.service';
 
@@ -8,7 +9,9 @@ export class GetGithubUserReposController {
   ) {}
 
   @Get(':username/repos')
-  getUserRepos(@Param('username') username: string) {
+  getUserRepos(
+    @Param('username') username: string,
+  ): Promise<ResponseRepoType[]> {
     return this.getGithubUserReposService.getUserRepos(username);
   }
 }

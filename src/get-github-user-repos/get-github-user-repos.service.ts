@@ -1,13 +1,13 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { GetReposInfoService } from 'src/get-repos-info/get-repos-info.service';
-import { UserRepo } from './types';
+import { ResponseRepoType, UserRepo } from './types';
 
 @Injectable()
 export class GetGithubUserReposService {
   constructor(private readonly getReposInfoService: GetReposInfoService) {}
 
-  async getUserRepos(username: string): Promise<any> {
+  async getUserRepos(username: string): Promise<ResponseRepoType[]> {
     try {
       const { data: userGithubRepos } = await axios.get<UserRepo[]>(
         `https://api.github.com/users/${username}/repos`,
@@ -25,11 +25,13 @@ export class GetGithubUserReposService {
     }
   }
 
-  private extractUsersRepos(repositories: UserRepo[]) {
+  private extractUsersRepos(repositories: UserRepo[]): UserRepo[] {
     return repositories.filter((repo) => repo.forks_count === 0);
   }
 
-  private async prepareMappedInfo(repository: UserRepo) {
+  private async prepareMappedInfo(
+    repository: UserRepo,
+  ): Promise<ResponseRepoType> {
     const {
       name,
       owner: { login },
@@ -42,7 +44,7 @@ export class GetGithubUserReposService {
     return {
       name,
       ownerLogin: login,
-      ...branchesInfo,
+      branches: branchesInfo,
     };
   }
 }
