@@ -1,13 +1,19 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
+import { BranchType, BranchInfo } from './types';
 
 @Injectable()
 export class GetReposInfoService {
-  async getReposInfo(branchUrl: string) {
+  async getBranchInfo(branchUrl: string): Promise<BranchInfo[]> {
     try {
-      const { data } = await axios.get(branchUrl);
+      const { data: branchesList } = await axios.get<BranchType[]>(branchUrl);
 
-      return data;
+      const preparedBranchesInfo = branchesList.map((branch) => ({
+        name: branch.name,
+        sha: branch.commit.sha,
+      }));
+
+      return preparedBranchesInfo;
     } catch (error) {
       return error;
     }

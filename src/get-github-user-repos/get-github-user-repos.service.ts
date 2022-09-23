@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { GetReposInfoService } from 'src/get-repos-info/get-repos-info.service';
-import { UserRepos } from './types';
+import { UserRepo } from './types';
 
 @Injectable()
 export class GetGithubUserReposService {
@@ -9,18 +9,14 @@ export class GetGithubUserReposService {
 
   async getUserRepos(username: string): Promise<any> {
     try {
-      const { data: userGithubRepos } = await axios.get<UserRepos[]>(
+      const { data: userGithubRepos } = await axios.get<UserRepo[]>(
         `https://api.github.com/users/${username}/repos`,
       );
 
       const allRepos = this.extractUsersRepos(userGithubRepos);
 
       const reposInfo = await Promise.all(
-        allRepos.map((repository) =>
-          this.getReposInfoService.getReposInfo(
-            repository.branches_url.replace('{/branch}', ''),
-          ),
-        ),
+        allRepos.map((repository) => this.prepareMappedInfo(repository)),
       );
 
       return reposInfo;
@@ -29,7 +25,24 @@ export class GetGithubUserReposService {
     }
   }
 
-  private extractUsersRepos(repositories: UserRepos[]) {
+  private extractUsersRepos(repositories: UserRepo[]) {
     return repositories.filter((repo) => repo.forks_count === 0);
+  }
+
+  private async prepareMappedInfo(repository: UserRepo) {
+    const {
+      name,
+      owner: { login },
+    } = repository;
+
+    const branchesInfo = await this.getReposInfoService.getBranchInfo(
+      repository.branches_url.replace('{/branch}', ''),
+    );
+
+    return {
+      name,
+      ownerLogin: login,
+      ...branchesInfo,
+    };
   }
 }

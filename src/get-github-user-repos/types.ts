@@ -3,7 +3,7 @@ interface RepoOwner {
   login: string;
 }
 
-export interface UserRepos {
+export interface UserRepo {
   id: number;
   name: string;
   owner: RepoOwner;
