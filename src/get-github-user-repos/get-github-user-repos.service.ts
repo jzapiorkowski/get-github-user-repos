@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { GetReposInfoService } from 'src/get-repos-info/get-repos-info.service';
 import { ResponseRepoType, UserRepo } from './types';
@@ -21,7 +21,10 @@ export class GetGithubUserReposService {
 
       return reposInfo;
     } catch (error) {
-      return error;
+      throw new HttpException(
+        error.message,
+        parseInt(error.response.status, 10),
+      );
     }
   }
 

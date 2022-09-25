@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, Injectable } from '@nestjs/common';
 import axios from 'axios';
 import { BranchType, BranchInfo } from './types';
 
@@ -15,7 +15,10 @@ export class GetReposInfoService {
 
       return preparedBranchesInfo;
     } catch (error) {
-      return error;
+      throw new HttpException(
+        error.message,
+        parseInt(error.response.status, 10),
+      );
     }
   }
 }
